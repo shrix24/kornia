@@ -73,8 +73,9 @@ def rgb_to_hsv(image: torch.Tensor, eps: float = 1e-8) -> torch.Tensor:
     h = (h / 6.0) % 1.0
     h = 2.0 * math.pi * h  # we return 0/2pi output
 
-    return torch.stack((h, s, v), dim=-3)
+    # return torch.cat([h, s, v], dim=0)
 
+    return torch.stack([h, s, v], dim=-3)
 
 def hsv_to_rgb(image: torch.Tensor) -> torch.Tensor:
     r"""Convert an image from HSV to RGB.
@@ -104,9 +105,10 @@ def hsv_to_rgb(image: torch.Tensor) -> torch.Tensor:
 
     hi: torch.Tensor = torch.floor(h * 6) % 6
     f: torch.Tensor = ((h * 6) % 6) - hi
-    p: torch.Tensor = v * (1.0 - s)
-    q: torch.Tensor = v * (1.0 - f * s)
-    t: torch.Tensor = v * (1.0 - (1.0 - f) * s)
+    one: torch.Tensor = torch.tensor(1.0, device=image.device, dtype=image.dtype)
+    p: torch.Tensor = v * (one - s)
+    q: torch.Tensor = v * (one - f * s)
+    t: torch.Tensor = v * (one - (one - f) * s)
 
     hi = hi.long()
     indices: torch.Tensor = torch.stack([hi, hi + 6, hi + 12], dim=-3)

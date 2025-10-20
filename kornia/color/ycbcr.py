@@ -60,6 +60,8 @@ def rgb_to_ycbcr(image: Tensor) -> Tensor:
     y: Tensor = _rgb_to_y(r, g, b)
     cb: Tensor = (b - y) * 0.564 + delta
     cr: Tensor = (r - y) * 0.713 + delta
+    
+    # return torch.cat([y, cb, cr], dim=0)
     return torch.stack([y, cb, cr], -3)
 
 
